@@ -1,0 +1,16 @@
+/.pytest_cache
+
+
+venv/**
+/venv
+__pycache__/
+/__pycache__
+**/__pycache__/**
+
+*.coverage
+coverage.xml
+/coverage_report
+pytest-report.xml
+
+/.vscode
+.DS_Store
