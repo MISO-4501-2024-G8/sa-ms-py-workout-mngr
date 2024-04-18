@@ -10,7 +10,7 @@ def index():
 @app.route('/')
 def health_check():
     response = {
-        'status': 'OK :)'
+        'status': 'OK'
     }
     return jsonify(response), 200
 
