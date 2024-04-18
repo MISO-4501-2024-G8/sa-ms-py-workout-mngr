@@ -1,0 +1,7 @@
+[coverage:run]
+relative_files = True
+source = app
+branch = True
+
+[xml]
+output = coverage.xml

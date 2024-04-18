@@ -1,0 +1,22 @@
+name: Requirements Backend ECS Python
+
+on:
+  push:
+    branches:
+      - main
+      - qa
+  pull_request:
+    branches:
+      - main
+      - qa
+
+jobs:
+  requirements-backend-ecs-python:
+    uses: MISO-4501-2024-G8/sa-pipeline/.github/workflows/requirement_backecs_py.yml@feature/UpdatePipelines
+    with:
+      project-name: 'sa-ms-py-workout-mngr'
+      project-key: 'sa-ms-py-workout-mngr'
+      language: 'python'
+      cache-name: 'cache-sa-ms-py-workout-mngr'
+      sonar-project-properties-file: "sonar-project-custom.properties"
+    secrets: inherit

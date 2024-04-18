@@ -1,0 +1,74 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "ms-py-workout-mngr",
+            "image": "public.ecr.aws/u7g2q2l0/ms-py-workout-mngr:latest",
+            "cpu": 256,
+            "memory": 512,
+            "portMappings": [
+                {
+                    "containerPort": 5001,
+                    "hostPort": 5001,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "DB_HOST",
+                    "value": "databasesportapp.cvweuasge1pc.us-east-1.rds.amazonaws.com"
+                },
+                {
+                    "name": "DB_USER",
+                    "value": "admin"
+                },
+                {
+                    "name": "DB_DATABASE",
+                    "value": "db_user"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "value": "123456789"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/task_ms-py-workout-mngr",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl --location 'http://localhost:5001/' || exit 1"
+                ],
+                "interval": 30,
+                "timeout": 5,
+                "retries": 3
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "task_ms-py-workout-mngr",
+    "taskRoleArn": "arn:aws:iam::905418247517:role/taskRole",
+    "executionRoleArn": "arn:aws:iam::905418247517:role/taskRole",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "tags": [
+        {
+            "key": "ekey",
+            "value": "evalue"
+        }
+    ]
+}
