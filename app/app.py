@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from modelos.modelos import db
-from vistas import VistaStatusCheck
+from vistas import VistaStatusCheck, VistaStravaLogin, VistaStravaCallback, VistaRefreshToken
 import uuid
 
 from decouple import config
@@ -32,6 +32,9 @@ api = Api(app)
 
 
 api.add_resource(VistaStatusCheck, '/')
+api.add_resource(VistaStravaLogin, '/strava_login')
+api.add_resource(VistaStravaCallback, '/auth_callback')
+api.add_resource(VistaRefreshToken, '/refresh_token')
 
 
 jwt = JWTManager(app)
