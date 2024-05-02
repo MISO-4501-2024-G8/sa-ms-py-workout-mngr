@@ -10,6 +10,8 @@ from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__ = 'user'
+
     id = db.Column(db.String(255), primary_key=True)
     email = db.Column(db.String(255))
     password = db.Column(db.String(512))
@@ -23,9 +25,30 @@ class User(db.Model):
     createdAt = db.Column(db.DateTime)
     updatedAt = db.Column(db.DateTime)
 
+class StravaUser(db.Model):
+    __tablename__ = 'strava_user'
+
+    id = db.Column(db.String(255), primary_key=True)
+    user_id = db.Column(db.String(255))
+    athlete_id = db.Column(db.String(255))
+    code = db.Column(db.String(255))
+    scope = db.Column(db.String(255))
+    access_token = db.Column(db.String(255))
+    refresh_token = db.Column(db.String(255))
+    timestamp = db.Column(db.Integer)
+    expiration_token = db.Column(db.DateTime)
+    createdAt = db.Column(db.DateTime)
+    updatedAt = db.Column(db.DateTime)
+    
 
 class UserSessionSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
+        include_relationships = True
+        load_instance = True
+
+class StravaUserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = StravaUser
         include_relationships = True
         load_instance = True

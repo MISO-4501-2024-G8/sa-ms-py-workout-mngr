@@ -4,7 +4,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from modelos.modelos import db
-from vistas import VistaStatusCheck, VistaStravaLogin, VistaStravaCallback, VistaRefreshToken
+from vistas import (
+    VistaStatusCheck, 
+    VistaStravaLogin, 
+    VistaStravaCallback, 
+    VistaStravaCallbackLocal, 
+    VistaRefreshToken,
+    VistaStravaAtlhlete,
+    VistaStravaActivities,
+    VistaStravaActivityDetail
+)
 import uuid
 
 from decouple import config
@@ -17,7 +26,8 @@ def generate_uuid():
     return parts[0]
 
 
-DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout_{generate_uuid()}.db')
+#DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout_{generate_uuid()}.db')
+DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout.db')
 print(' * DATABASE_URI:', DATABASE_URI)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -33,8 +43,12 @@ api = Api(app)
 
 api.add_resource(VistaStatusCheck, '/')
 api.add_resource(VistaStravaLogin, '/strava_login')
-api.add_resource(VistaStravaCallback, '/auth_callback')
+api.add_resource(VistaStravaCallback, '/auth_callback/<string:id>')
+api.add_resource(VistaStravaCallbackLocal, '/auth_callback_local/<string:id>')
 api.add_resource(VistaRefreshToken, '/refresh_token')
+api.add_resource(VistaStravaAtlhlete, '/strava_athlete')
+api.add_resource(VistaStravaActivities, '/strava_activities')
+api.add_resource(VistaStravaActivityDetail, '/strava_activity')
 
 
 jwt = JWTManager(app)
