@@ -29,6 +29,10 @@
                 {
                     "name": "DB_PASSWORD",
                     "value": "123456789"
+                },
+                {
+                    "name": "DATABASE_URL",
+                    "value": "mysql+pymysql://admin:123456789@databasesportapp.cvweuasge1pc.us-east-1.rds.amazonaws.com/db_user"
                 }
             ],
             "mountPoints": [],
