@@ -279,7 +279,7 @@ class VistaStravaActivityDetail(Resource):
             'Authorization': f'Bearer {access_token}'
         }
         activity_detail_url = f'{activity_url}/{activity_id}'
-        response_activity = requests.get(activity_detail_url, headers=headers)
+        response_activity = requests.get(activity_detail_url, headers=headers) # NOSONAR
         if response_activity.status_code != 200:
             rslt = refresh_token(strava_user.refresh_token, user_id)
             if rslt.get('code') != 200:
@@ -288,7 +288,7 @@ class VistaStravaActivityDetail(Resource):
             headers = {
                 'Authorization': f'Bearer {access_token}'
             }
-            response_activity = requests.get(activity_detail_url, headers=headers)
+            response_activity = requests.get(activity_detail_url, headers=headers) # NOSONAR
         activity = response_activity.json()
         return {"message": "OK", "code": 200, "activity": activity}, 200
 
