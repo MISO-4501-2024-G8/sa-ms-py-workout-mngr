@@ -147,10 +147,10 @@ def resolve_callback(url, id):
             db.session.commit()
             print(' * athlete:', athlete)
             return redirect(url + '?athlete_id=' + str(athlete_id))
-        return redirect(url + '?error=Error al obtener el token A')
+        return redirect(url + '?error=Error al obtener el token')
     except IntegrityError as e:
         print(' * e:', e)
-        return redirect(url + '?error=Error al obtener el token B')
+        return redirect(url + '?error=Error al obtener el token')
 class VistaStravaCallbackLocal(Resource):
     def get(self,id):
         return resolve_callback(front_url_local, id)
@@ -310,6 +310,7 @@ class VistaSyncActivities(Resource):
             }
             response_activities = requests.get(activities_url, headers=headers)
         activities = response_activities.json()
+        print(' * activities:', activities)
         for activity in activities:
             id_activity = activity.get('id')
             athlete_id = activity.get('athlete').get('id')
