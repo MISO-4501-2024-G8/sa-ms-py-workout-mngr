@@ -28,8 +28,8 @@ def generate_uuid():
     return parts[0]
 
 
-#DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout_{generate_uuid()}.db')
-DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout.db')
+DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout_{generate_uuid()}.db')
+#DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout.db')
 print(' * DATABASE_URI:', DATABASE_URI)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

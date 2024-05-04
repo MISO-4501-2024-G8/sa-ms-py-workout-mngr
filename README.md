@@ -33,7 +33,7 @@ correr tests con pytest
 ```
 export DATABASE_URL=
 unset DATABASE_URL
-pytest --cov=app/ --cov-report xml --junitxml=pytest-report.xml
+pytest -s --cov=app/ --cov-report xml --junitxml=pytest-report.xml
 coverage xml
 coverage html -d coverage_report
 ```

@@ -26,6 +26,7 @@ from sqlalchemy.exc import IntegrityError
 
 user_schema = UserSessionSchema()
 strava_user_schema = StravaUserSchema()
+strava_activity_schema = StravaActivitySchema()
 
 client_id = '125884'
 client_secret = 'a0f691d5d314ebf2042c2e8ab477c7fcbfc2f86c'
@@ -91,6 +92,8 @@ def resolve_callback(url, id):
             'grant_type': 'authorization_code'
         }
         response = requests.post(token_url, data=data)
+        response_data = response.json()
+        print(' * response_data:', response_data)
         print(' * response:', response.status_code)
         if response.status_code == 200:
             response_data = response.json()
@@ -107,6 +110,7 @@ def resolve_callback(url, id):
             }
             response_athlete = requests.get(athlete_url, headers=headers)
             athlete = response_athlete.json()
+            print(' * athlete:', athlete)
             athlete_id = athlete.get('id')
             expiration_token =datetime.strptime(
                 fecha, date_format
@@ -143,10 +147,10 @@ def resolve_callback(url, id):
             db.session.commit()
             print(' * athlete:', athlete)
             return redirect(url + '?athlete_id=' + str(athlete_id))
-        return redirect(url + '?error=Error al obtener el token')
+        return redirect(url + '?error=Error al obtener el token A')
     except IntegrityError as e:
         print(' * e:', e)
-        return redirect(url + '?error=Error al obtener el token')
+        return redirect(url + '?error=Error al obtener el token B')
 class VistaStravaCallbackLocal(Resource):
     def get(self,id):
         return resolve_callback(front_url_local, id)
