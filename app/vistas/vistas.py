@@ -11,6 +11,8 @@ from modelos.modelos import (
     UserSessionSchema,
     StravaUser,
     StravaUserSchema,
+    StravaActivity,
+    StravaActivitySchema,
     db,
 )
 
@@ -58,6 +60,17 @@ class VistaStravaLogin(Resource):
             '?client_id=' + client_id + 
             '&redirect_uri=' + redirect_uri + 
             '&response_type=code&approval_prompt=auto&scope=activity:write,activity:read_all&state=test')
+
+class VistaActiveUser(Resource):
+    def get(self):
+        user_id = request.args.get('user_id')
+        user = User.query.filter_by(id=user_id).first()
+        if user is None:
+            return {"message": "Usuario no registrado", "code": 404}, 404
+        strava_user = StravaUser.query.filter_by(user_id=user_id).first()
+        if strava_user is None:
+            return {"message": "Usuario no registrado en Strava", "code": 404}, 404
+        return {"message": "OK", "code": 200, "strava_user": strava_user_schema.dump(strava_user)}, 200
 
 def resolve_callback(url, id):
     print(' * id:', id)
@@ -271,3 +284,73 @@ class VistaStravaActivityDetail(Resource):
             response_activity = requests.get(activity_detail_url, headers=headers)
         activity = response_activity.json()
         return {"message": "OK", "code": 200, "activity": activity}, 200
+
+class VistaSyncActivities(Resource):
+    def post(self):
+        user_id = request.args.get('user_id')
+        strava_user = StravaUser.query.filter_by(user_id=user_id).first()
+        if strava_user is None:
+            return {"message": msg_error_user_not_registered, "code": 404}, 404
+        access_token = strava_user.access_token
+        headers = {
+            'Authorization': f'Bearer {access_token}'
+        }
+        response_activities = requests.get(activities_url, headers=headers)
+        if response_activities.status_code != 200:
+            rslt = refresh_token(strava_user.refresh_token, user_id)
+            if rslt.get('code') != 200:
+                return rslt, 500
+            access_token = rslt.get('access_token')
+            headers = {
+                'Authorization': f'Bearer {access_token}'
+            }
+            response_activities = requests.get(activities_url, headers=headers)
+        activities = response_activities.json()
+        for activity in activities:
+            id_activity = activity.get('id')
+            athlete_id = activity.get('athlete').get('id')
+            activity_name = activity.get('name')
+            activity_description = ''
+            activity_type = activity.get('type')
+            activity_distance = activity.get('distance')
+            activity_trainer = activity.get('trainer')
+            activity_commute = activity.get('commute')
+            start_date_local = activity.get('start_date_local')
+            elapsed_time = activity.get('elapsed_time')
+            sync = 1
+            activity_registered = StravaActivity.query.filter_by(id=id_activity).first()
+            if activity_registered:
+                activity_registered.athlete_id = athlete_id
+                activity_registered.activity_name = activity_name
+                activity_registered.activity_description = activity_description
+                activity_registered.activity_type = activity_type
+                activity_registered.activity_distance = activity_distance
+                activity_registered.activity_trainer = activity_trainer
+                activity_registered.activity_commute = activity_commute
+                activity_registered.start_date_local = start_date_local
+                activity_registered.elapsed_time = elapsed_time
+                activity_registered.sync = sync
+                activity_registered.updatedAt = datetime.now()
+                db.session.commit()
+            else:
+                strava_activity = StravaActivity(
+                    id=id_activity,
+                    athlete_id=athlete_id,
+                    activity_name=activity_name,
+                    activity_description=activity_description,
+                    activity_type=activity_type,
+                    activity_distance=activity_distance,
+                    activity_trainer=activity_trainer,
+                    activity_commute=activity_commute,
+                    start_date_local=start_date_local,
+                    elapsed_time=elapsed_time,
+                    sync=sync,
+                    createdAt=datetime.now(),
+                    updatedAt=datetime.now()
+                )
+                db.session.add(strava_activity)
+                db.session.commit()
+            
+        strava_user.last_sync = datetime.now().strftime(date_format)
+        db.session.commit()
+        return {"message": "OK Sync", "code": 200, "activities": activities}, 200

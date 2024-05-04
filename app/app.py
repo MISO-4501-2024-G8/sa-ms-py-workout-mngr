@@ -12,7 +12,9 @@ from vistas import (
     VistaRefreshToken,
     VistaStravaAtlhlete,
     VistaStravaActivities,
-    VistaStravaActivityDetail
+    VistaStravaActivityDetail,
+    VistaActiveUser,
+    VistaSyncActivities
 )
 import uuid
 
@@ -47,8 +49,10 @@ api.add_resource(VistaStravaCallback, '/auth_callback/<string:id>')
 api.add_resource(VistaStravaCallbackLocal, '/auth_callback_local/<string:id>')
 api.add_resource(VistaRefreshToken, '/refresh_token')
 api.add_resource(VistaStravaAtlhlete, '/strava_athlete')
+api.add_resource(VistaActiveUser, '/active_user')
 api.add_resource(VistaStravaActivities, '/strava_activities')
 api.add_resource(VistaStravaActivityDetail, '/strava_activity')
+api.add_resource(VistaSyncActivities, '/sync_activities')
 
 
 jwt = JWTManager(app)
