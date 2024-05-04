@@ -224,6 +224,22 @@ class VistaStravaAtlhlete(Resource):
             response_athlete = requests.get(athlete_url, headers=headers)
         athlete = response_athlete.json()
         return {"message": "OK", "code": 200, "athlete": athlete}, 200
+    
+def getActivities(user_id, access_token, strava_user):
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    response_activities = requests.get(activities_url, headers=headers)
+    if response_activities.status_code != 200:
+        rslt = refresh_token(strava_user.refresh_token, user_id)
+        if rslt.get('code') != 200:
+            return rslt, 500
+        access_token = rslt.get('access_token')
+        headers = {
+            'Authorization': f'Bearer {access_token}'
+        }
+        response_activities = requests.get(activities_url, headers=headers)
+    return response_activities.json()
 
 class VistaStravaActivities(Resource):
     def get(self):
@@ -232,20 +248,7 @@ class VistaStravaActivities(Resource):
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
         access_token = strava_user.access_token
-        headers = {
-            'Authorization': f'Bearer {access_token}'
-        }
-        response_activities = requests.get(activities_url, headers=headers)
-        if response_activities.status_code != 200:
-            rslt = refresh_token(strava_user.refresh_token, user_id)
-            if rslt.get('code') != 200:
-                return rslt, 500
-            access_token = rslt.get('access_token')
-            headers = {
-                'Authorization': f'Bearer {access_token}'
-            }
-            response_activities = requests.get(activities_url, headers=headers)
-        activities = response_activities.json()
+        activities = getActivities(user_id, access_token, strava_user)
         return {"message": "OK", "code": 200, "activities": activities}, 200
 
     def post(self):
@@ -296,21 +299,7 @@ class VistaSyncActivities(Resource):
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
         access_token = strava_user.access_token
-        headers = {
-            'Authorization': f'Bearer {access_token}'
-        }
-        response_activities = requests.get(activities_url, headers=headers)
-        if response_activities.status_code != 200:
-            rslt = refresh_token(strava_user.refresh_token, user_id)
-            if rslt.get('code') != 200:
-                return rslt, 500
-            access_token = rslt.get('access_token')
-            headers = {
-                'Authorization': f'Bearer {access_token}'
-            }
-            response_activities = requests.get(activities_url, headers=headers)
-        activities = response_activities.json()
-        print(' * activities:', activities)
+        activities = getActivities(user_id, access_token, strava_user)
         for activity in activities:
             id_activity = activity.get('id')
             athlete_id = activity.get('athlete').get('id')
