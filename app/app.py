@@ -29,7 +29,6 @@ def generate_uuid():
     parts = str(uid).split('-')
     return parts[0]
 
-logging.debug('Debug message')
 
 DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout_{generate_uuid()}.db')
 #DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout.db')
