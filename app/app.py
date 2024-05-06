@@ -23,6 +23,8 @@ from decouple import config
 
 app=Flask(__name__) # NOSONAR
 
+app.config['DEBUG'] = True
+
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
