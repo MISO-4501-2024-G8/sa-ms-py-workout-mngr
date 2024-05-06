@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -22,11 +23,15 @@ from decouple import config
 
 app=Flask(__name__) # NOSONAR
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
 def generate_uuid():
     uid = uuid.uuid4()
     parts = str(uid).split('-')
     return parts[0]
 
+logging.debug('Debug message')
 
 DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout_{generate_uuid()}.db')
 #DATABASE_URI = config('DATABASE_URL', default=f'sqlite:///workout.db')

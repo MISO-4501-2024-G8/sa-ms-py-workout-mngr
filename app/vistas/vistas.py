@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+import logging
 from datetime import datetime
 import requests
 from flask import request, redirect
@@ -16,6 +16,7 @@ from modelos.modelos import (
     db,
 )
 
+logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s')
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from pathlib import Path
 from decouple import config
@@ -67,6 +68,8 @@ class VistaActiveUser(Resource):
     def get(self):
         user_id = request.args.get('user_id')
         print(user_id_log, user_id)
+        log_str = ' * user_id: ' + user_id
+        logging.debug(log_str)
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             return {"message": "Usuario no registrado", "code": 404}, 404
