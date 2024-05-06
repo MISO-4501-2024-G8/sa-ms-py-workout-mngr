@@ -53,6 +53,14 @@ def generate_uuid():
     parts = str(uid).split("-")
     return parts[0]
 
+def callback_response(url):
+    response  = dict()
+    response["statusCode"] = 302
+    response["headers"] = {
+        "Location": url
+    }
+    return response, 302
+
 class VistaStatusCheck(Resource):
     def get(self):
         return {"message": "OK", "code": 200}, 200
@@ -86,7 +94,7 @@ def resolve_callback(url, id):
     error = request.args.get('error')
     if error:
         print(' * error:', error)
-        return redirect(url + '?error=' + error, code=302)
+        return callback_response(url + '?error=' + error)
     try:
         code = request.args.get('code')
         state = request.args.get('state')
@@ -135,7 +143,7 @@ def resolve_callback(url, id):
                 user_registered.updatedAt = datetime.now()
                 db.session.commit()
                 print(' * user_registered:', strava_user_schema.dump(user_registered))
-                return redirect(url + '?athlete_id=' + str(athlete_id), code=302)
+                return callback_response(url + '?athlete_id=' + str(athlete_id))
             
             id_strava_user = generate_uuid()
             athlete = StravaUser (
@@ -154,11 +162,11 @@ def resolve_callback(url, id):
             db.session.add(athlete)
             db.session.commit()
             print(' * athlete:', athlete)
-            return redirect(url + '?athlete_id=' + str(athlete_id), code=302)
-        return redirect(url + '?error=Error al obtener el token', code=302)
+            return callback_response(url + '?athlete_id=' + str(athlete_id))
+        return callback_response(url + '?error=Error al obtener el token')
     except IntegrityError as e:
         print(' * e:', e)
-        return redirect(url + '?error=Error al obtener el token', code=302)
+        return callback_response(url + '?error=Error al obtener el token')
 class VistaStravaCallbackLocal(Resource):
     def get(self,id):
         return resolve_callback(front_url_local, id)
