@@ -43,6 +43,7 @@ front_url_local = 'http://localhost:4200/#/strava'
 
 date_format = "%Y-%m-%d %H:%M:%S"
 msg_error_user_not_registered = "Error usuario no registrado"
+user_id_log = ' * user_id:'
 
 def generate_uuid():
     uid = uuid.uuid4()
@@ -65,6 +66,7 @@ class VistaStravaLogin(Resource):
 class VistaActiveUser(Resource):
     def get(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         user = User.query.filter_by(id=user_id).first()
         if user is None:
             return {"message": "Usuario no registrado", "code": 404}, 404
@@ -126,7 +128,7 @@ def resolve_callback(url, id):
                 user_registered.expiration_token = expiration_token
                 user_registered.updatedAt = datetime.now()
                 db.session.commit()
-                print(' * user_registered:', user_registered)
+                print(' * user_registered:', strava_user_schema.dump(user_registered))
                 return redirect(url + '?athlete_id=' + str(athlete_id))
             
             id_strava_user = generate_uuid()
@@ -197,6 +199,7 @@ def refresh_token(refresh_token, user_id):
 class VistaRefreshToken(Resource):
     def get(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
@@ -205,6 +208,7 @@ class VistaRefreshToken(Resource):
 class VistaStravaAtlhlete(Resource):
     def get(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
@@ -244,6 +248,7 @@ def getActivities(user_id, access_token, strava_user):
 class VistaStravaActivities(Resource):
     def get(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
@@ -253,6 +258,7 @@ class VistaStravaActivities(Resource):
 
     def post(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
@@ -270,6 +276,7 @@ class VistaStravaActivities(Resource):
 class VistaStravaActivityDetail(Resource):
     def get(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
@@ -295,6 +302,7 @@ class VistaStravaActivityDetail(Resource):
 class VistaSyncActivities(Resource):
     def post(self):
         user_id = request.args.get('user_id')
+        print(user_id_log, user_id)
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
             return {"message": msg_error_user_not_registered, "code": 404}, 404
