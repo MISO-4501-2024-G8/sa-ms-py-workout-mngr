@@ -94,7 +94,7 @@ def resolve_callback(url, id):
     error = request.args.get('error')
     if error:
         print(' * error:', error)
-        return callback_response(url + '?error=' + error)
+        return redirect(url + '?error=' + error)
     try:
         code = request.args.get('code')
         state = request.args.get('state')
@@ -143,7 +143,7 @@ def resolve_callback(url, id):
                 user_registered.updatedAt = datetime.now()
                 db.session.commit()
                 print(' * user_registered:', strava_user_schema.dump(user_registered))
-                return callback_response(url + '?athlete_id=' + str(athlete_id))
+                return redirect(url + '?athlete_id=' + str(athlete_id))
             
             id_strava_user = generate_uuid()
             athlete = StravaUser (
@@ -162,11 +162,11 @@ def resolve_callback(url, id):
             db.session.add(athlete)
             db.session.commit()
             print(' * athlete:', athlete)
-            return callback_response(url + '?athlete_id=' + str(athlete_id))
-        return callback_response(url + '?error=Error al obtener el token')
+            return redirect(url + '?athlete_id=' + str(athlete_id))
+        return redirect(url + '?error=Error al obtener el token')
     except IntegrityError as e:
         print(' * e:', e)
-        return callback_response(url + '?error=Error al obtener el token')
+        return redirect(url + '?error=Error al obtener el token')
 class VistaStravaCallbackLocal(Resource):
     def get(self,id):
         return resolve_callback(front_url_local, id)
