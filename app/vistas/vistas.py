@@ -4,6 +4,7 @@ import requests
 from flask import request, redirect
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource
+import logging
 
 from modelos.modelos import (
     User,
@@ -22,6 +23,9 @@ import json
 import uuid
 
 from sqlalchemy.exc import IntegrityError
+
+logger = logging.getLogger(__name__)
+
 
 user_schema = UserSessionSchema()
 strava_user_schema = StravaUserSchema()
@@ -66,11 +70,14 @@ class VistaActiveUser(Resource):
     def get(self):
         user_id = request.args.get('user_id')
         print(user_id_log, user_id)
+        logger.debug(user_id_log + user_id)
         user = User.query.filter_by(id=user_id).first()
         if user is None:
+            logger.error(" Usuario no registrado")
             return {"message": "Usuario no registrado", "code": 404}, 404
         strava_user = StravaUser.query.filter_by(user_id=user_id).first()
         if strava_user is None:
+            logger.error(" Usuario no registrado en Strava")
             return {"message": "Usuario no registrado en Strava", "code": 404}, 404
         return {"message": "OK", "code": 200, "strava_user": strava_user_schema.dump(strava_user)}, 200
 

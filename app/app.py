@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -21,8 +22,7 @@ import uuid
 from decouple import config
 
 app=Flask(__name__) # NOSONAR
-
-app.config['DEBUG'] = True
+logging.basicConfig(level=logging.DEBUG)
 
 def generate_uuid():
     uid = uuid.uuid4()
