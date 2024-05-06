@@ -22,6 +22,8 @@ from decouple import config
 
 app=Flask(__name__) # NOSONAR
 
+app.config['DEBUG'] = True # NOSONAR
+
 def generate_uuid():
     uid = uuid.uuid4()
     parts = str(uid).split('-')
