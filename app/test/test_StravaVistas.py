@@ -83,7 +83,20 @@ class TestVistaActiveUser(unittest.TestCase):
         response_data = json.loads(response.data)
         self.assertEqual(response.status_code, 404)
 
-    def test_active_user(self):
+    @patch("requests.get")
+    def test_active_user(self, mock_get):
+        
+        mock_get.side_effect = [
+            MagicMock(
+                status_code=200,
+                json=lambda: {
+                    "id": 123,
+                    "username": "john_doe",
+                    "resource_state": 2,
+                },
+            ),
+            # Add more responses as needed
+        ]
         user = User(
             id="123",
             email="",
@@ -120,6 +133,20 @@ class TestVistaActiveUser(unittest.TestCase):
         response_data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response_data["strava_user"]["athlete_id"], "123")
+
+        mock_get.side_effect = [
+            MagicMock(
+                status_code=400,
+                json=lambda: {
+                    "id": 123,
+                    "username": "john_doe",
+                    "resource_state": 2,
+                },
+            ),
+            # Add more responses as needed
+        ]
+        response = self.app.get("/active_user?user_id=123")
+        self.assertEqual(response.status_code, 500)
 
 
 class TestVistaStravaCallbackLocal(unittest.TestCase):

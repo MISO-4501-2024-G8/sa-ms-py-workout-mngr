@@ -87,6 +87,14 @@ class VistaActiveUser(Resource):
         if strava_user is None:
             logger.error(" Usuario no registrado en Strava")
             return {"message": "Usuario no registrado en Strava", "code": 404}, 404
+        access_token = strava_user.access_token
+        headers = {
+            'Authorization': f'Bearer {access_token}'
+        }
+        response_athlete = requests.get(athlete_url, headers=headers)
+        print('status_code 1: ',response_athlete.status_code)
+        if response_athlete.status_code != 200:
+            return {"message": "Error register token is not working", "code": 500}, 500
         return {"message": "OK", "code": 200, "strava_user": strava_user_schema.dump(strava_user)}, 200
 
 def resolve_callback(url, id):
