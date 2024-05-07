@@ -56,6 +56,33 @@ class TestVistaActiveUser(unittest.TestCase):
         self.app = app
         self.app = app.test_client()
 
+    def test_active_user_no_user(self):
+        response = self.app.get("/active_user?user_id=124")
+        response_data = json.loads(response.data)
+        self.assertEqual(response.status_code, 404)
+
+    def test_active_user_no_strava_user(self):
+        user = User(
+            id="125",
+            email="",
+            password="",
+            doc_num="",
+            doc_type="CC",
+            name="John Doe",
+            phone="1234567890",
+            user_type=1,
+            token="",
+            expiration_token=datetime.now(),
+            createdAt=datetime.now(),
+            updatedAt=datetime.now(),
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        response = self.app.get("/active_user?user_id=125")
+        response_data = json.loads(response.data)
+        self.assertEqual(response.status_code, 404)
+
     def test_active_user(self):
         user = User(
             id="123",
@@ -99,6 +126,10 @@ class TestVistaStravaCallbackLocal(unittest.TestCase):
     def setUp(self):
         self.app = app
         self.app = app.test_client()
+
+    def test_strava_callback_error(self):
+        response = self.app.get("/auth_callback_local/123?error=123")
+        self.assertEqual(response.status_code, 302)
 
     @patch("requests.post")
     @patch("requests.get")
@@ -144,6 +175,11 @@ class TestVistaRefreshToken(unittest.TestCase):
     def setUp(self):
         self.app = app
         self.app = app.test_client()
+    
+    def test_refresh_token_no_user(self):
+        response = self.app.get("/refresh_token?user_id=124")
+        response_data = json.loads(response.data)
+        self.assertEqual(response.status_code, 404)
 
     @patch("requests.post")
     def test_refresh_token(self, mock_post):
