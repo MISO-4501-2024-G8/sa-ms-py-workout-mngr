@@ -16,7 +16,7 @@
             "environment": [
                 {
                     "name": "DB_HOST",
-                    "value": "databasesportapp.cvweuasge1pc.us-east-1.rds.amazonaws.com"
+                    "value": "dbsportapprestore.cvweuasge1pc.us-east-1.rds.amazonaws.com"
                 },
                 {
                     "name": "DB_USER",
@@ -28,11 +28,11 @@
                 },
                 {
                     "name": "DB_PASSWORD",
-                    "value": "123456789"
+                    "value": "c5d5e19030104ba38e131c2ee8e76dec"
                 },
                 {
                     "name": "DATABASE_URL",
-                    "value": "mysql+pymysql://admin:123456789@databasesportapp.cvweuasge1pc.us-east-1.rds.amazonaws.com/db_user"
+                    "value": "mysql+pymysql://admin:c5d5e19030104ba38e131c2ee8e76dec@dbsportapprestore.cvweuasge1pc.us-east-1.rds.amazonaws.com/db_user"
                 }
             ],
             "mountPoints": [],
