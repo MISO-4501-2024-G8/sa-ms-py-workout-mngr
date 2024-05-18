@@ -10,9 +10,11 @@ from modelos.modelos import (
     User,
     UserSessionSchema,
     StravaUser,
+    SportProfile,
     StravaUserSchema,
     StravaActivity,
     StravaActivitySchema,
+    SportProfileSchema,
     db,
 )
 
@@ -30,6 +32,7 @@ logger = logging.getLogger(__name__)
 user_schema = UserSessionSchema()
 strava_user_schema = StravaUserSchema()
 strava_activity_schema = StravaActivitySchema()
+sport_profile_schema = SportProfileSchema()
 
 client_id = '125884'
 client_secret = 'a0f691d5d314ebf2042c2e8ab477c7fcbfc2f86c'
@@ -175,9 +178,11 @@ def resolve_callback(url, id):
     except IntegrityError as e:
         print(' * e:', e)
         return callback_response(url + '?error=Error al obtener el token')
+
 class VistaStravaCallbackLocal(Resource):
     def get(self,id):
         return resolve_callback(front_url_local, id)
+
 class VistaStravaCallback(Resource):
     def get(self,id):
         return resolve_callback(front_url, id)
@@ -227,6 +232,7 @@ class VistaRefreshToken(Resource):
             return {"message": msg_error_user_not_registered, "code": 404}, 404
         rslt = refresh_token(strava_user.refresh_token, user_id)
         return rslt
+
 class VistaStravaAtlhlete(Resource):
     def get(self):
         user_id = request.args.get('user_id')
@@ -378,3 +384,120 @@ class VistaSyncActivities(Resource):
         strava_user.last_sync = datetime.now().strftime(date_format)
         db.session.commit()
         return {"message": "OK Sync", "code": 200, "activities": activities}, 200
+    
+class VistaSportProfile(Resource):
+    def post(self):
+        try:
+            user_id = request.json["user_id"]
+            print("user_id", user_id)
+            user_profile = SportProfile(
+                id = user_id,
+                sh_caminar = request.json["sh_caminar"],
+                sh_trotar=request.json["sh_trotar"],
+                sh_correr=request.json["sh_correr"],
+                sh_nadar=request.json["sh_nadar"],
+                sh_bicicleta=request.json["sh_bicicleta"],
+                pp_fractura=request.json["pp_fractura"],
+                pp_esguinse=request.json["pp_esguinse"],
+                pp_lumbalgia=request.json["pp_lumbalgia"],
+                pp_articulacion=request.json["pp_articulacion"],
+                pp_migranias=request.json["pp_migranias"],
+                i_vo2max=request.json["i_vo2max"],
+                i_ftp=request.json["i_ftp"],
+                i_total_practice_time=request.json["i_total_practice_time"],
+                i_total_objective_achived=request.json["i_total_objective_achived"],
+                h_total_calories=request.json["h_total_calories"],
+                h_avg_bpm=request.json["h_avg_bpm"],
+                createdAt=datetime.now(),
+                updatedAt=datetime.now(),
+            )
+            db.session.add(user_profile)
+            db.session.commit()
+            return {
+                "message": "Se pudo crear el perfil deportivo exitosmante",
+                "user_profile": sport_profile_schema.dump(user_profile),
+                "code": 200,
+            }, 200
+        
+        except Exception as e:
+            print("error_msg", e)
+            db.session.rollback()
+            return {
+                "message": "No se pudo crear el perfil de entrenamianto",
+                "code": 500,
+            }, 500
+    
+class VistaSportProfileId(Resource): 
+    def put(self, id):
+        try:
+            user_id = id
+            print(user_id_log, user_id)
+            user_profile = SportProfile.query.filter(SportProfile.id == user_id).first()
+            if user_profile is None:
+                return {
+                    "message": "El perfil deportivo no existe",
+                    "code": 404,
+            }, 404
+            user_profile.sh_caminar = request.json["sh_caminar"],
+            user_profile.sh_trotar=request.json["sh_trotar"],
+            user_profile.sh_correr=request.json["sh_correr"],
+            user_profile.sh_nadar=request.json["sh_nadar"],
+            user_profile.sh_bicicleta=request.json["sh_bicicleta"],
+            user_profile.pp_fractura=request.json["pp_fractura"],
+            user_profile.pp_esguinse=request.json["pp_esguinse"],
+            user_profile.pp_lumbalgia=request.json["pp_lumbalgia"],
+            user_profile.pp_articulacion=request.json["pp_articulacion"],
+            user_profile.pp_migranias=request.json["pp_migranias"],
+            user_profile.i_vo2max=request.json["i_vo2max"],
+            user_profile.i_ftp=request.json["i_ftp"],
+            user_profile.i_total_practice_time=request.json["i_total_practice_time"],
+            user_profile.i_total_objective_achived=request.json["i_total_objective_achived"],
+            user_profile.h_total_calories=request.json["h_total_calories"],
+            user_profile.h_avg_bpm=request.json["h_avg_bpm"],
+            user_profile.updatedAt=datetime.now(),
+            
+            db.session.commit() 
+            return {
+                "message": "Se pudo actualizar el perfil deportivo exitosmante",
+                "user_profile": sport_profile_schema.dump(user_profile),
+                "code": 200,
+            }, 200
+        except Exception as e:
+            print(error_msg, e)
+            db.session.rollback()
+            return {
+                "message": "No se pudo actualizar el perfil de entrenamianto",
+                "code": 500,
+            }, 500
+        
+    def get(self, id):
+        user_id = id
+        print(user_id_log, user_id)
+        user_profile = SportProfile.query.filter(SportProfile.id == user_id).first()
+        if user_profile is None:
+            return {
+                    "message": "El perfil deportivo buscado no existe",
+                    "code": 404,
+            }, 404
+        
+        return {
+                "message": "Se Encontro El perfil deportivo buscado",
+                "user_profile": sport_profile_schema.dump(user_profile),
+                "code": 200,
+            }, 200
+    
+    def delete(self, id):
+        user_profile = SportProfile.query.get_or_404(id)
+        if user_profile is None:
+            return {
+                    "message": "El perfil deportivo a eliminar no existe",
+                    "code": 404,
+            }, 404
+        db.session.delete(user_profile)
+        db.session.commit()
+        return {
+                "message": "Se elimino correctmante el perfil deportivo",
+                "code": 200,
+            }, 200
+
+
