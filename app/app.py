@@ -15,7 +15,9 @@ from vistas import (
     VistaStravaActivities,
     VistaStravaActivityDetail,
     VistaActiveUser,
-    VistaSyncActivities
+    VistaSyncActivities, 
+    VistaSportProfile,
+    VistaSportProfileId
 )
 import uuid
 
@@ -55,7 +57,8 @@ api.add_resource(VistaActiveUser, '/active_user')
 api.add_resource(VistaStravaActivities, '/strava_activities')
 api.add_resource(VistaStravaActivityDetail, '/strava_activity')
 api.add_resource(VistaSyncActivities, '/sync_activities')
-
+api.add_resource(VistaSportProfile, '/sport_profile')
+api.add_resource(VistaSportProfileId, '/sport_profile/<string:id>')
 
 jwt = JWTManager(app)
 

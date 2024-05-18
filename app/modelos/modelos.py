@@ -58,6 +58,51 @@ class StravaActivity(db.Model):
     createdAt = db.Column(db.DateTime)
     updatedAt = db.Column(db.DateTime)
 
+class SportUser(db.Model):
+    __tablename__ = 'sport_user'
+
+    id = db.Column(db.String(255), primary_key=True)
+    gender = db.Column(db.String(255))
+    age = db.Column(db.String(512))
+    weight = db.Column(db.String(255))
+    height = db.Column(db.String(255))
+    birth_country = db.Column(db.String(512))
+    birth_city = db.Column(db.String(500))
+    residence_country = db.Column(db.String(500))
+    residence_city = db.Column(db.String(500))
+    residence_seniority = db.Column(db.Integer)
+    sports = db.Column(db.String(500))
+    acceptance_notify = db.Column(db.Integer)
+    acceptance_tyc = db.Column(db.Integer)
+    acceptance_personal_data = db.Column(db.Integer)
+    typePlan =  db.Column(db.String(500))
+    createdAt = db.Column(db.DateTime)
+    updatedAt = db.Column(db.DateTime)
+
+class SportProfile(db.Model):
+    __tablename__ = 'sport_profile'
+
+    id = db.Column(db.String(255), primary_key=True)
+    sh_caminar = db.Column(db.Integer)
+    sh_trotar = db.Column(db.Integer)
+    sh_correr = db.Column(db.Integer)
+    sh_nadar = db.Column(db.Integer)
+    sh_bicicleta = db.Column(db.Integer)
+    pp_fractura = db.Column(db.Integer)
+    pp_esguinse = db.Column(db.Integer)
+    pp_lumbalgia = db.Column(db.Integer)
+    pp_articulacion = db.Column(db.Integer)
+    pp_migranias = db.Column(db.Integer)
+    i_vo2max = db.Column(db.Float)
+    i_ftp = db.Column(db.Float)
+    i_total_practice_time = db.Column(db.Integer)
+    i_total_objective_achived =  db.Column(db.Integer)
+    h_total_calories = db.Column(db.Integer)
+    h_avg_bpm =  db.Column(db.Float)
+    createdAt = db.Column(db.DateTime)
+    updatedAt = db.Column(db.DateTime)
+  
+
 
 class UserSessionSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -74,5 +119,17 @@ class StravaUserSchema(SQLAlchemyAutoSchema):
 class StravaActivitySchema(SQLAlchemyAutoSchema):
     class Meta:
         model = StravaActivity
+        include_relationships = True
+        load_instance = True
+
+class SportUserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = SportUser
+        include_relationships = True
+        load_instance = True
+
+class SportProfileSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = SportProfile
         include_relationships = True
         load_instance = True
