@@ -67,7 +67,6 @@ class VistaSportProfileId(TestCase):
 
     def test_put_no_None(self):
         nuevo_sport_profile_fake = {
-            "user_id": self.data_factory.name(),
             "sh_caminar": self.data_factory.random_digit(),
             "sh_trotar": self.data_factory.random_digit(),
             "sh_correr": self.data_factory.random_digit(),
@@ -100,7 +99,14 @@ class VistaSportProfileId(TestCase):
     def test_delete_no_None(self):
         response = self.app.delete(self.endpoint_id,
                                 headers={'Content-Type': 'application/json'}).get_data().decode("utf-8")
-        print(response)
+        print(response) 
         self.assertIsNotNone(response)
+
+    def test_delete_(self):
+        endpoint = "/sport_profile/1"
+        response = self.app.delete(endpoint,
+                                headers={'Content-Type': 'application/json'}).get_data().decode("utf-8")
+        print(response)
+        self.assertFalse(response[0] == "El perfil deportivo a eliminar no existe")
         
 

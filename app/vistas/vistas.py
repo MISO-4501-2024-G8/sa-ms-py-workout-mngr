@@ -427,21 +427,6 @@ class VistaSportProfile(Resource):
                 "code": 500,
             }, 500
     
-    """def get(self):
-        user_profile = SportProfile.query.all()
-        print("hola", user_profile[0].id)
-        if user_profile is None:
-            return {
-                    "message": "no hay perfiles deportivos exisistentes",
-                    "code": 404,
-            }, 404
-        
-        return {
-                "message": "Se Encontraron todos los perfiles deportivos buscados",
-                "user_profile": sport_profile_schema.dump(user_profile),
-                "code": 200,
-            }, 200"""
-    
 class VistaSportProfileId(Resource): 
     def put(self, id):
         try:
